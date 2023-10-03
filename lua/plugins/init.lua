@@ -31,7 +31,7 @@ return {
 
 			vim.keymap.set('n', '<leader>ft', '<cmd>NvimTreeToggle<CR>') -- toggle [f]ile [t]ree
 			vim.keymap.set('n', '<leader>fo', '<cmd>NvimTreeFocus<CR>') -- [f]ile explorer [o]pen and focus
-			vim.keymap.set('n', '<leader>ff', '<cmd>NvimFindFile<CR>') -- [f]ind the current [f]ile in the tree
+			vim.keymap.set('n', '<leader>ff', '<cmd>NvimTreeFindFile<CR>') -- [f]ind the current [f]ile in the tree
 			vim.keymap.set('n', '<leader>fc', '<cmd>NvimTreeCollapse<CR>') -- [f]ile tree [c]ollapse
 
 			-- OR setup with some options
@@ -93,9 +93,19 @@ return {
 				lsp_zero.default_keymaps({buffer = bufnr})
 	 		end)
 
+			-- Use MOODLE_ROOT env variable so LSP doesn't get confused by git modules
+			local moodle_root = os.getenv("MOODLE_ROOT")
+			if moodle_root ~= '' and moodle_root ~= nil then
+				local rootdir = function(args)
+					return moodle_root
+				end
+			end
+
+			require("symbols-outline").setup()
+
 			-- Set up language servers
 			-- PHP
-			require'lspconfig'.intelephense.setup{}
+			require'lspconfig'.intelephense.setup{root_dir = rootdir}
 			-- require'lspconfig'.phpactor.setup{}
 
 			-- JavaScript/TypeScript
@@ -151,6 +161,19 @@ return {
 		'vim-test/vim-test',
 		config = function()
 
+		end,
+	},
+	{
+		'mustache/vim-mustache-handlebars',
+		config = function()
+
+		end,
+	},
+	{
+		'simrat39/symbols-outline.nvim',
+		config = function()
+			-- Open [o]utline
+			vim.keymap.set('n', '<leader>o', '<cmd>SymbolsOutline<CR>')
 		end,
 	}
 }
