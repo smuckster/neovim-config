@@ -15,40 +15,95 @@ return {
 
 	},
 	{
-		"nvim-tree/nvim-tree.lua",
-		version = "*",
-		lazy = false,
+		'nvim-neo-tree/neo-tree.nvim',
+		branch = 'v3.x',
 		dependencies = {
-			"nvim-tree/nvim-web-devicons",
+			'nvim-lua/plenary.nvim',
+			'nvim-tree/nvim-web-devicons',
+			'MunifTanjim/nui.nvim',
 		},
 		config = function()
-			-- disable netrw at the very start of your init.lua
-			vim.g.loaded_netrw = 1
-			vim.g.loaded_netrwPlugin = 1
-
-			-- set termguicolors to enable highlight groups
-			vim.opt.termguicolors = true
-
-			vim.keymap.set('n', '<leader>ft', '<cmd>NvimTreeToggle<CR>') -- toggle [f]ile [t]ree
-			vim.keymap.set('n', '<leader>fo', '<cmd>NvimTreeFocus<CR>') -- [f]ile explorer [o]pen and focus
-			vim.keymap.set('n', '<leader>ff', '<cmd>NvimTreeFindFile<CR>') -- [f]ind the current [f]ile in the tree
-			vim.keymap.set('n', '<leader>fc', '<cmd>NvimTreeCollapse<CR>') -- [f]ile tree [c]ollapse
-
-			-- OR setup with some options
-			require("nvim-tree").setup({
-				sort_by = "case_sensitive",
-				view = {
-					width = 36,
+			require('neo-tree').setup({
+				close_if_last_window = false, -- Close Neotree if it is the last window in the tab
+				popup_border_style = 'rounded',
+				enable_git_status = true,
+				enable_normal_mode_for_inputs = false, -- Enable normal mode for input dialogs
+				sort_case_insensitive = false,
+				window = {
+					position = 'left',
+					width = 40,
 				},
-				renderer = {
-					group_empty = true,
+				hijack_netrw_behavior = 'open_default',
+				use_libuv_file_watcher = false,
+				filesystem = {
+					filtered_items = {
+						visible = true,
+						hide_dotfiles = true,
+						hide_gitignored = true,
+						never_show = {
+							'node_modules'
+						},
+						follow_current_file = {
+							enabled = true,
+							leave_dirs_open = true,
+						},
+						group_empty_dirs = true,
+					},
 				},
-				filters = {
-					dotfiles = true,
+				buffers = {
+					follow_current_file = {
+						enabled = true,
+						leave_dirs_open = true,
+					},
+					group_entry_dirs = true,
 				},
 			})
+
+			-- Toggle the [f]ile [t]ree
+			vim.keymap.set('n', '<leader>ft', '<cmd>Neotree toggle<CR>')
+
+			-- [f]ocus the [f]ile tree
+			vim.keymap.set('n', '<leader>ff', '<cmd>Neotree reveal<CR>')
+
+			-- Open [g]it [s]tatus window
+			vim.keymap.set('n', '<leader>gs', '<cmd>Neotree float git_status<CR>')
 		end,
 	},
+	-- {
+	--	"nvim-tree/nvim-tree.lua",
+	--	version = "*",
+	--	lazy = false,
+	--	dependencies = {
+	--		"nvim-tree/nvim-web-devicons",
+	--	},
+	--	config = function()
+	--		-- disable netrw at the very start of your init.lua
+	--		vim.g.loaded_netrw = 1
+	--		vim.g.loaded_netrwPlugin = 1
+	--
+	--		-- set termguicolors to enable highlight groups
+	--		vim.opt.termguicolors = true
+	--
+	--		vim.keymap.set('n', '<leader>ft', '<cmd>NvimTreeToggle<CR>') -- toggle [f]ile [t]ree
+	--		vim.keymap.set('n', '<leader>fo', '<cmd>NvimTreeFocus<CR>') -- [f]ile explorer [o]pen and focus
+	--		vim.keymap.set('n', '<leader>ff', '<cmd>NvimTreeFindFile<CR>') -- [f]ind the current [f]ile in the tree
+	--		vim.keymap.set('n', '<leader>fc', '<cmd>NvimTreeCollapse<CR>') -- [f]ile tree [c]ollapse
+	--
+	--		-- OR setup with some options
+	--		require("nvim-tree").setup({
+	--			sort_by = "case_sensitive",
+	--			view = {
+	--				width = 36,
+	--			},
+	--			renderer = {
+	--				group_empty = true,
+	--			},
+	--			filters = {
+	--				dotfiles = true,
+	--			},
+	--		})
+	--	end,
+	-- },
 	{
 		'nvim-telescope/telescope.nvim', 
 		tag = '0.1.3',
@@ -67,7 +122,7 @@ return {
 			local configs = require("nvim-treesitter.configs")
 
 			configs.setup({
-				ensure_installed = {"php", "lua", "vim", "vimdoc", "javascript", "html" },
+				ensure_installed = {"php", "scss", "lua", "vim", "vimdoc", "javascript", "html" },
 				sync_install = false,
 				highlight = { enable = true },
 				indent = { enable = true },  
@@ -91,23 +146,22 @@ return {
 				-- see :help lsp-zero-keybindings
 				-- to learn the available actions
 				lsp_zero.default_keymaps({buffer = bufnr})
-	 		end)
+			end)
 
 			-- Use MOODLE_ROOT env variable so LSP doesn't get confused by git modules
 			local moodle_root = os.getenv("MOODLE_ROOT")
 			if moodle_root ~= '' and moodle_root ~= nil then
-				local rootdir = function(args)
+				local rootdirectory = function(args)
 					return moodle_root
 				end
+
+                -- Set up PHP language server
+                require'lspconfig'.intelephense.setup{root_dir = rootdirectory}
 			end
 
 			require("symbols-outline").setup()
 
 			-- Set up language servers
-			-- PHP
-			require'lspconfig'.intelephense.setup{root_dir = rootdir}
-			-- require'lspconfig'.phpactor.setup{}
-
 			-- JavaScript/TypeScript
 			require'lspconfig'.tsserver.setup{}
 		end,
@@ -137,7 +191,8 @@ return {
 	{
 		'tpope/vim-fugitive',
 		config = function()
-
+            -- Open a three-way diff set of windows for [m]erge [c]onflicts
+            vim.keymap.set('n', '<leader>mc', '<cmd>Gvdiffsplit!<CR>')
 		end,
 	},
 
@@ -146,21 +201,27 @@ return {
 		lazy = false,
 		enabled = true,
 		config = function()
-			-- vim.cmd('let g:vdebug_keymap = {"run": "<F5>","run_to_cursor": "<F6>","step_over": "<F7>","step_into": "<F8>","step_out": "<S-F8>","close": "<F4>","detach": "<F2>","set_breakpoint": "<leader>b"}')
-			-- vim.cmd("let g:vdebug_keymap['set_breakpoint'] = '<leader>b'")
-			-- vim.g.vdebug_keymap['set_breakpoint'] = '<leader>b'
-			-- vim.keymap.set('n', '<leader>b', '<cmd>:Breakpoint<CR>')
 			vim.keymap.set('n', '<leader>b', '<cmd>:python3 debugger.set_breakpoint()<CR>')
 			vim.keymap.set('n', '<leader>dl', '<cmd>:python3 debugger.run()<CR>')
 
 			vim.keymap.set('n', '<F2>', '<Nop>')
 			vim.keymap.set('n', '<F2>', '<cmd>:python3 debugger.step_over()<CR>')
+
+			vim.keymap.set('n', '<F3>', '<Nop>')
+			vim.keymap.set('n', '<F3>', '<cmd>:python3 debugger.step_into()<CR>')
+
+			vim.keymap.set('n', '<F4>', '<Nop>')
+			vim.keymap.set('n', '<F4>', '<cmd>:python3 debugger.step_out()<CR>')
 		end,
 	},
 	{
 		'vim-test/vim-test',
 		config = function()
+			-- [t]est [n]earest
+			vim.keymap.set('n', '<leader>tn', '<cmd>TestNearest<CR>')
 
+			-- [t]est [f]ile
+			vim.keymap.set('n', '<leader>tf', '<cmd>TestFile<CR>')
 		end,
 	},
 	{
@@ -175,5 +236,25 @@ return {
 			-- Open [o]utline
 			vim.keymap.set('n', '<leader>o', '<cmd>SymbolsOutline<CR>')
 		end,
-	}
+	},
+	{
+		'm4xshen/autoclose.nvim',
+		config = function()
+			require('autoclose').setup()
+		end,
+	},
+	{
+		'terrortylor/nvim-comment',
+		config = function()
+			require('nvim_comment').setup()
+			vim.keymap.set('n', '<C-_>', '<cmd>CommentToggle<CR>')
+			vim.keymap.set('v','<C-_>', "gc", { remap = true })
+		end,
+	},
+	{
+		'airblade/vim-gitgutter',
+		config = function()
+
+		end,
+	},
 }

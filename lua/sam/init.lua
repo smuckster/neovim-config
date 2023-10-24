@@ -36,3 +36,9 @@ vim.keymap.set('n', '<leader>cs', '<cmd>:edit ~/.config/nvim/lua/sam/init.lua<CR
 
 -- Open the [c]onfig file [p]lugins/init.lua
 vim.keymap.set('n', '<leader>cp', '<cmd>:edit ~/.config/nvim/lua/plugins/init.lua<CR>')
+
+-- Use the system clipboard
+vim.cmd([[set clipboard=unnamed]])
+
+-- Use spaces instead of tabs
+vim.cmd([[set expandtab]])
