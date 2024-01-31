@@ -41,7 +41,7 @@ return {
 						hide_dotfiles = true,
 						hide_gitignored = true,
 						never_show = {
-							'node_modules'
+							-- 'node_modules'
 						},
 						follow_current_file = {
 							enabled = true,
@@ -69,41 +69,6 @@ return {
 			vim.keymap.set('n', '<leader>gs', '<cmd>Neotree float git_status<CR>')
 		end,
 	},
-	-- {
-	--	"nvim-tree/nvim-tree.lua",
-	--	version = "*",
-	--	lazy = false,
-	--	dependencies = {
-	--		"nvim-tree/nvim-web-devicons",
-	--	},
-	--	config = function()
-	--		-- disable netrw at the very start of your init.lua
-	--		vim.g.loaded_netrw = 1
-	--		vim.g.loaded_netrwPlugin = 1
-	--
-	--		-- set termguicolors to enable highlight groups
-	--		vim.opt.termguicolors = true
-	--
-	--		vim.keymap.set('n', '<leader>ft', '<cmd>NvimTreeToggle<CR>') -- toggle [f]ile [t]ree
-	--		vim.keymap.set('n', '<leader>fo', '<cmd>NvimTreeFocus<CR>') -- [f]ile explorer [o]pen and focus
-	--		vim.keymap.set('n', '<leader>ff', '<cmd>NvimTreeFindFile<CR>') -- [f]ind the current [f]ile in the tree
-	--		vim.keymap.set('n', '<leader>fc', '<cmd>NvimTreeCollapse<CR>') -- [f]ile tree [c]ollapse
-	--
-	--		-- OR setup with some options
-	--		require("nvim-tree").setup({
-	--			sort_by = "case_sensitive",
-	--			view = {
-	--				width = 36,
-	--			},
-	--			renderer = {
-	--				group_empty = true,
-	--			},
-	--			filters = {
-	--				dotfiles = true,
-	--			},
-	--		})
-	--	end,
-	-- },
 	{
 		'nvim-telescope/telescope.nvim', 
 		tag = '0.1.3',
@@ -122,7 +87,7 @@ return {
 			local configs = require("nvim-treesitter.configs")
 
 			configs.setup({
-				ensure_installed = {"php", "scss", "lua", "vim", "vimdoc", "javascript", "html" },
+				ensure_installed = {"php", "rust", "scss", "lua", "vim", "vimdoc", "javascript", "html" },
 				sync_install = false,
 				highlight = { enable = true },
 				indent = { enable = true },  
@@ -164,12 +129,25 @@ return {
 			-- Set up language servers
 			-- JavaScript/TypeScript
 			require'lspconfig'.tsserver.setup{}
+
+            -- Rust
+            require'lspconfig'.rust_analyzer.setup({
+                capabilities = capabilities,
+                on_attach = on_attach,
+            })
 		end,
 	},
 
 	--- Uncomment these if you want to manage LSP servers from neovim
-	{'williamboman/mason.nvim'},
-	{'williamboman/mason-lspconfig.nvim'},
+	-- {
+	--         'williamboman/mason.nvim',
+	--         -- opts = {
+	--         --     ensure_installed = {
+	--         --         "rust-analyzer",
+	--         --     }
+	--         -- }
+	--     },
+	-- {'williamboman/mason-lspconfig.nvim'},
 
 	-- LSP Support
 	{
@@ -257,4 +235,13 @@ return {
 
 		end,
 	},
+    {
+        'f-person/git-blame.nvim',
+        config = function()
+            require('gitblame').setup {
+                virtual_text_column = 80,
+            }
+            vim.keymap.set('n', '<leader>gb', '<cmd>GitBlameToggle<CR>')
+        end,
+    }
 }
