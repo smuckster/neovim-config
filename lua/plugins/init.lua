@@ -6,13 +6,13 @@ return {
 		config = function()
 			-- load colorscheme here
 			vim.cmd([[colorscheme catppuccin]])
-
+	
 			-- update the line numbering colors
 			vim.api.nvim_set_hl(0, 'LineNr', { fg = '#9CA0B0', bold = true })
 			vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#9CA0B0' })
 			vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = '#9CA0B0' })
 		end,
-
+	
 	},
 	{
 		'nvim-neo-tree/neo-tree.nvim',
@@ -80,6 +80,23 @@ return {
 			vim.keymap.set('n', '<leader>pb', builtin.buffers, {})
 		end,
 	},
+    {
+        'nvim-telescope/telescope-ui-select.nvim',
+        config = function()
+            require("telescope").setup {
+                extensions = {
+                    ["ui-select"] = {
+                        require("telescope.themes").get_dropdown {
+                            -- even more opts
+                        }
+                    }
+                }
+            }
+            -- To get ui-select loaded and working with telescope, you need to call
+            -- load_extension, somewhere after setup function:
+            require("telescope").load_extension("ui-select")
+        end
+    },
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
@@ -155,6 +172,9 @@ return {
 		dependencies = {
 			{'hrsh7th/cmp-nvim-lsp'},
 		},
+        config = function()
+            vim.keymap.set({'n', 'v'}, '<leader>ca', vim.lsp.buf.code_action, {})
+        end,
 	},
 
 	-- Autocompletion
@@ -243,5 +263,68 @@ return {
             }
             vim.keymap.set('n', '<leader>gb', '<cmd>GitBlameToggle<CR>')
         end,
-    }
+    },
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function()
+            require('lualine').setup({
+                options = {
+                    globalstatus = true,
+                },
+            })
+        end,
+    },
+    {
+        'nvim-treesitter/nvim-treesitter-context',
+        config = function()
+            require'treesitter-context'.setup{
+                line_numbers = false,
+            }
+            -- [c]ontext [t]oggle
+            vim.keymap.set('n', '<leader>ct', '<cmd>TSContextToggle<CR>')
+
+            -- [c]ontext [g]o (jump to nearest context)
+            vim.keymap.set('n', '<leader>cg', function()
+                require('treesitter-context').go_to_context(vim.v.count1)
+            end, { silent = true })
+        end,
+    },
+    {
+        'akinsho/git-conflict.nvim',
+        config = function()
+            require('git-conflict').setup()
+
+            -- [s]elect [c]urrent changes
+            vim.keymap.set('n', '<leader>sc', '<cmd>GitConflictChooseOurs')
+
+            -- [s]elect [i]ncoming changes
+            vim.keymap.set('n', '<leader>si', '<cmd>GitConflictChooseTheirs')
+
+            -- [s]elect [b]oth changes
+            vim.keymap.set('n', '<leader>sb', '<cmd>GitConflictChooseBoth')
+
+            -- [s]elect [n]one of the changes
+            vim.keymap.set('n', '<leader>sn', '<cmd>GitConflictChooseNone')
+
+            -- [l]ist [c]onflicts
+            vim.keymap.set('n', '<leader>lc', '<cmd>GitConflictListQf')
+
+            -- [n]ext [c]onflict
+            vim.keymap.set('n', '<leader>nc', '<cmd>GitConflictNextConflict')
+
+            -- [p]revious [c]onflict
+            vim.keymap.set('n', '<leader>pc', '<cmd>GitConflictPrevConflict')
+        end,
+    },
+    -- {
+    --     'github/copilot.vim',
+    --     config = function()
+    --         -- [C]opilot [e]nable
+    --         vim.keymap.set('n', '<leader>ce', '<cmd>Copilot enable<CR>')
+    --
+    --         -- [C]opilot [d]isable
+    --         vim.keymap.set('n', '<leader>cd', '<cmd>Copilot disable<CR>')
+    --     end,
+    -- }
 }

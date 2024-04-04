@@ -5,8 +5,11 @@ vim.g.mapleader = ' '
 vim.o.tabstop = 4
 vim.o.shiftwidth = 4
 
+-- vim.o.showmode = false
+-- vim.cmd([[set cmdheight=0]])
+
 -- Use block cursor in insert mode
-vim.o.guicursor = ""
+-- vim.o.guicursor = ""
 
 -- Return from file explorer to last open buffer ([b]ack to [b]uffer)
 vim.keymap.set('n', '<leader>bb', function()
