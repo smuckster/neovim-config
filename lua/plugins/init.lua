@@ -317,6 +317,19 @@ return {
             vim.keymap.set('n', '<leader>pc', '<cmd>GitConflictPrevConflict')
         end,
     },
+    {
+        'norcalli/nvim-colorizer.lua',
+        config = function()
+            require('colorizer').setup()
+        end,
+    },
+    -- {
+    --     'kevinhwang91/nvim-ufo',
+    --     dependencies = {'kevinhwang91/promise-async'},
+    --     config = function()
+    --         require('ufo').setup()
+    --     end
+    -- }
     -- {
     --     'github/copilot.vim',
     --     config = function()

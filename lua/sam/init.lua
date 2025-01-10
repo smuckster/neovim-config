@@ -30,6 +30,11 @@ vim.keymap.set('n', '<C-l>', '<C-w>l');
 vim.cmd([[set number]])
 vim.cmd([[set relativenumber]])
 
+-- Set indent-based folding
+vim.cmd([[set foldmethod=indent]])
+vim.cmd([[set foldlevel=99]])
+-- vim.cmd([[set foldopen=all]])
+
 -- Toggle between relative and absolute numbers
 vim.keymap.set('n', '<leader>n', function()
 	vim.cmd([[set invrelativenumber]])	
